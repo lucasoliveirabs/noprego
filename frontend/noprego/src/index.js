@@ -3,19 +3,34 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import App from './App';
+import {createBrowserRouter, RouterProvider} from 'react-router-dom';
+import { SessionProvider } from './SessionContext'; 
+
+import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <LoginPage/>,
+    errorElement: <div>404 Not Found</div>
+  },
+  {
+    path: '/home',
+    element: <HomePage/>,
+    errorElement: <div>404 Not Found</div>
+  }
+]);
 
 root.render(
   <React.StrictMode>
     <GoogleOAuthProvider clientId="321113386712-3u0vo7b7faoln0jr9nfvo1hoflkef7mp.apps.googleusercontent.com">
-    <App />
+      <SessionProvider>
+        <RouterProvider router={router} />
+      </SessionProvider>
     </GoogleOAuthProvider>
   </React.StrictMode>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
