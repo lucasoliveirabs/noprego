@@ -45,7 +45,7 @@ const UserDataSchema = new mongoose.Schema({
         type: String,
         required: false
     },
-    phone: {
+    personal_address2: {
         type: String,
         required: false
     },
@@ -65,8 +65,8 @@ const UserDataSchema = new mongoose.Schema({
         type: String,
         required: false
     },
-    approval: {
-        type: Boolean,
+    phone: {
+        type: String,
         required: false
     }
 });

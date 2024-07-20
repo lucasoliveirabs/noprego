@@ -4,7 +4,6 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import User from './model/User.js';
 import Project from './model/Project.js';
-import Contract from './model/Contract.js';
 
 const app = express();
 app.use(cors());
@@ -42,14 +41,17 @@ app.post("/login", async (request, response) => {
 });
 
 app.post("/user", async (request, response) => {
-    try {
-        const user = await User.findOne(request.body.form_response.hidden);
+    const user = await User.findOne(request.body.form_response.hidden);
+    console.log('after user fetch');
         if(!user.userdata){
             user.userdata = {};
         }
         user.userdata = formatTypeformData(request);
+        console.log('after userdata fetch');
         await user.save();
         response.status(201).send('User successfully updated');
+    try {
+        
     } catch (error) {
         response.status(500).json({message: error.message});
     }
@@ -94,33 +96,51 @@ const createWallet = async (lumxApiKey) => {
     }    
 }
 
-const getContractAddress = async (contractName) => {
-    const project = await Contract.findOne();
-}
-
 const formatTypeformData = (request) => {
     const formattedValues = {};
-    request.body.form_response.answers.forEach(answer => {
-        const id  = answer.field.id.replace('_field_id', '');
-        const value = answer.type === 'boolean' ? answer.boolean : answer.text || answer.date || answer.number || answer.file_url;
-        formattedValues[id] = value;
+    const fieldMap = {
+        "Nome completo": "name",
+        "CPF": "cpf",
+        "Data de nascimento": "birth_date",
+        "Address": "personal_address",
+        "Address2": "personal_address2",        
+        "City/Town": "city",
+        "State/Region/Province": "state",
+        "Zip/Post Code": "postcode",
+        "Country": "country",
+        "Telefone": "phone"
+    };
+
+    const fieldIdMap = new Map();
+    request.body.form_response.definition.fields.forEach(field => {
+        fieldIdMap.set(field.id, field.title);
+    });
+
+    request.body.form_response.answers.forEach( answer => {
+        const fieldId = answer.field.id;
+        const fieldTitle = fieldIdMap.get(fieldId);
+        const fieldName = fieldMap[fieldTitle];
+
+        let value;
+        switch (answer.type) {
+        case 'text':
+            value = answer.text;
+            break;
+        case 'date':
+            value = answer.date;
+            break;
+        case 'phone_number':
+            value = answer.phone_number;
+            break;
+        case 'boolean':
+            value = answer.boolean;
+            break;
+        default:
+            value = '';
+        }
+        formattedValues[fieldName] = value;
     });
     return formattedValues;
-}
-
-const formatJotformResponse = (request) => {
-    const result = {};
-
-    for (const key in request.body.answers) {
-        const answer = request.body.answers[key];
-        if (answer.name === 'upload' && answer.file && answer.file.url) {
-            result[answer.name] = answer.file.url;
-        } else if (answer.text) {
-            result[answer.name] = answer.text;
-        }
-    }
-
-    return result;
 }
 
 const deployImageIPFS = async (url) => {
