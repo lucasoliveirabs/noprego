@@ -72,23 +72,27 @@ const UserDataSchema = new mongoose.Schema({
 });
 
 const ArtworkSchema = new mongoose.Schema({
-    artwork_title: {
+    object_type: {
         type: String,
         required: false
     },
-    artist: {
+    object_title: {
         type: String,
         required: false
     },
-    year: {
+    manufacturer_artist_name: {
+        type: String,
+        required: false
+    },
+    creation_year: {
         type: Number,
         required: false
     },
-    dimensions: {
+    object_dimensions: {
         type: String,
         required: false
     },
-    description: {
+    object_description: {
         type: String,
         required: false
     },
@@ -104,23 +108,25 @@ const ArtworkSchema = new mongoose.Schema({
         type: Number,
         required: false
     },
+    document_upload: {
+        type: String,
+        required: false
+    },
+    purchase_proof_upload: {
+        type: String,
+        required: false
+    },
     image_upload: {
+        type: String,
+        required: false
+    },
+    fee_payment_proof_upload: {
         type: String,
         required: false
     },
     hash_ipfs: {
         type: String,
         required: false
-    },
-    created_at: {
-        type: Date,
-        required: false,
-        default: Date.now
-    },
-    updated_at: {
-        type: Date,
-        required: false,
-        default: Date.now
     }
 });
 
