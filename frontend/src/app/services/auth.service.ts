@@ -45,7 +45,7 @@ async isNoPregoUser(gmail:any) {
       body: JSON.stringify({ email: gmail }),
     });
     const data = await response.json();
-    return data.address;
+    return data;
   } catch (error) {
     console.error('Error:  ', error);
     return false; 
